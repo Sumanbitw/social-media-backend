@@ -3,8 +3,10 @@ const app = express()
 const morgan = require('morgan')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const port = process.env.PORT || 3000
 require("dotenv/config")
 
+const userRoute = require("./api/router/user.router")
 mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser : true, useUnifiedTopology: true }, () => {
     console.log("connected to DB")
 })
@@ -28,6 +30,9 @@ app.use((req, res, next) => {
     next()
 })
 
+
+app.use('/user', userRoute)
+
 app.get('/', (req, res, next) => {
     res.status(200).json({
         message : "Sociana Backend"
@@ -47,5 +52,7 @@ app.use((error,req,res,next) => {
         }
     })
 })
+
+app.listen(port)
 
 module.exports = app

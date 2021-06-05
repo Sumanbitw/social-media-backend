@@ -5,7 +5,7 @@ const router = express.Router()
 const bcrypt = require('bcrypt')
 var jwt = require('jsonwebtoken');
 require("dotenv/config")
-const User = require("../models/user")
+const User = require("../model/user.model")
 
 
 router.get('/signup',async(req, res, next) => {
@@ -18,6 +18,7 @@ router.get('/signup',async(req, res, next) => {
         })
     }
 })
+
 router.post("/signup", async (req, res, next) => {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(req.body.password, salt)
@@ -31,7 +32,6 @@ router.post("/signup", async (req, res, next) => {
             email : req.body.email,
             password : hashedPassword,
             })
-        }
         try {    
         const savedUser = await user.save()
         const token = jwt.sign({
@@ -44,39 +44,40 @@ router.post("/signup", async (req, res, next) => {
         console.log(error)
         res.status(500).json({
             message : error
-        })   
-    }      
+        }) 
+    }  
+   }      
+})
+
+    router.delete('/signup/:userId', async (req, res, next) => {
+        try{
+        const removeUser =  await User.remove({ _id : req.params.userId })
+        res.status(200).json(removeUser)
+    }catch(error){
+        res.status(500).json({
+            message : error
+        })
+    }    
     })
 
-     router.delete('/signup/:userId', async (req, res, next) => {
-         try{
-         const removeUser =  await User.remove({ _id : req.params.userId })
-         res.status(200).json(removeUser)
-        }catch(error){
+    router.post('/login',async (req, res, next) => {
+    const user = await User.findOne({ email : req.body.email })
+    !user && res.status(401).json({ message : "Auth login failed" })
+
+    const validatePassword = await bcrypt.compare(req.body.password, user.password)
+        !validatePassword && res.status(401).json({ message : "Wrong Password" })
+
+        try{
+        const token = jwt.sign({ 
+            userId : user._id,
+            email : user.email,
+        }, process.env.JWT_KEY, {expiresIn : "1d"})
+        res.status(200).json({ message : "Succesfully login", token : token})
+        }catch(error) {
             res.status(500).json({
                 message : error
             })
-        }    
-     })
-
-     router.post('/login',async (req, res, next) => {
-        const user = await User.findOne({ email : req.body.email })
-        !user && res.status(401).json({ message : "Auth login failed" })
-
-        const validatePassword = await bcrypt.compare(req.body.password, user.password)
-         !validatePassword && res.status(401).json({ message : "Wrong Password" })
-
-         try{
-            const token = jwt.sign({ 
-                userId : user._id,
-                email : user.email,
-            }, process.env.JWT_KEY, {expiresIn : "1d"})
-            res.status(200).json({ message : "Succesfully login", token : token})
-         }catch(error) {
-             res.status(500).json({
-                 message : error
-             })
-         }
-     })
-     
+        }
+    })
+    
 module.exports = router
