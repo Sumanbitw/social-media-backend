@@ -2,7 +2,7 @@
   "name": "social-media-backend",
   "version": "1.0.0",
   "description": "This is backend of social media library",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "nodemon app.js"
   },
