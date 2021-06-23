@@ -7,6 +7,9 @@ const port = process.env.PORT || 3000
 require("dotenv/config")
 
 const userRoute = require("./api/router/user.router")
+const authRoute = require("./api/router/auth.router")
+const postRoute = require("./api/router/post.router")
+
 mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser : true, useUnifiedTopology: true }, () => {
     console.log("connected to DB")
 })
@@ -32,6 +35,8 @@ app.use((req, res, next) => {
 
 
 app.use('/user', userRoute)
+app.use('/auth', authRoute)
+app.use("/posts", postRoute)
 
 app.get('/', (req, res, next) => {
     res.status(200).json({
