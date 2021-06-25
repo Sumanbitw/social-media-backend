@@ -71,7 +71,7 @@ router.post("/signup", async (req, res, next) => {
             userId : user._id,
             email : user.email,
         }, process.env.JWT_KEY, {expiresIn : "1d"})
-        res.status(200).json({ message : "Succesfully login", token : token})
+        res.status(200).json({ message : "Succesfully login", user : user, token : token})
         }catch(error) {
             res.status(500).json({
                 message : error
