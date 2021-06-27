@@ -56,7 +56,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-//get friends
+//get friends information
 router.get("/friends/:userId", async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
