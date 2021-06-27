@@ -76,7 +76,7 @@ router.get("/friends/:userId", async (req, res) => {
   }
 });
 
-//follow a user
+//follow a user info
 
 router.put("/:id/follow", async (req, res) => {
   if (req.body.user !== req.params.id) {
