@@ -2,6 +2,20 @@ const User = require("../model/user.model");
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 
+
+//get a user 
+router.get("/", async(req, res) => {
+  console.log(req)
+  try{
+    const {user} = req
+    const getUser = await User.findOne({ _id : user })
+    res.json({ success : true, message: "user data loaded", getUser : getUser })
+  }catch(error){
+    res.json({ success : false, message : "Unable to load data", error : error })
+  }
+})
+
+
 //update user
 router.put("/:id", async (req, res) => {
   if (req.body.user === req.params.id || req.body.isAdmin) {
