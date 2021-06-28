@@ -8,7 +8,7 @@ router.get("/", async(req, res) => {
   console.log(req)
   try{
     const {user} = req
-    const getUser = await User.findOne({ _id : user })
+    const getUser = await User.findOne( user )
     res.json({ success : true, message: "user data loaded", getUser : getUser })
   }catch(error){
     res.json({ success : false, message : "Unable to load data", error : error })
