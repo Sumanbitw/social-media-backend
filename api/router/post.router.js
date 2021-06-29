@@ -4,7 +4,7 @@ const User = require("../model/user.model");
 const verify = require("../middleware/validation")
 //create a post
 
-router.post("/",verify, async (req, res) => {
+router.post("/", async (req, res) => {
   const newPost = new Post(req.body);
   try {
     const savedPost = await newPost.save();
