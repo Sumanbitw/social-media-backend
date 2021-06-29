@@ -5,10 +5,10 @@ const bcrypt = require("bcryptjs");
 
 //get a user 
 router.get("/", async(req, res) => {
-  console.log(req)
   try{
-    const {user} = req
-    const getUser = await User.findOne( user )
+    const {userId} = req
+    console.log(userId)
+    const getUser = await User.findOne( {_id : userId} )
     res.json({ success : true, message: "user data loaded", getUser : getUser })
   }catch(error){
     res.json({ success : false, message : "Unable to load data", error : error })

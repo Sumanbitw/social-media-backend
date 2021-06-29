@@ -67,14 +67,15 @@ router.post("/signup", async (req, res, next) => {
         !validatePassword && res.status(401).json({ message : "Wrong Password" })
 
         try{
-        const token = jwt.sign({ 
-            userId : user._id,
-            email : user.email,
-        }, process.env.JWT_KEY, {expiresIn : "1d"})
-        res.status(200).json({ message : "Succesfully login", user : user, token : token})
-        }catch(error) {
-            res.status(500).json({
-                message : error
+            let token = jwt.sign({ 
+                userId : user._id,
+                email : user.email,
+            }, process.env.JWT_KEY, {expiresIn : "1d"})
+            token=`Bearer ${token}`;
+            res.status(200).json({ message : "Succesfully login", user : user, token : token})
+            }catch(error) {
+                res.status(500).json({
+                    message : error
             })
         }
     })
