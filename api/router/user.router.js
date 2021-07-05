@@ -31,9 +31,9 @@ router.put("/:id", async (req, res) => {
       const user = await User.findByIdAndUpdate(req.params.id, {
         $set: req.body,
       });
-      res.status(200).json("Account has been updated");
+      res.status(200).json({ success : true, message : "Account has been updated", user : user });
     } catch (err) {
-      return res.status(500).json(err);
+      return res.status(500).json({ success : false, message : "Error while updating", error : err });
     }
   } else {
     return res.status(403).json("You can update only your account!");
@@ -44,10 +44,10 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   if (req.body.user === req.params.id || req.body.isAdmin) {
     try {
-      await User.findByIdAndDelete(req.params.id);
-      res.status(200).json("Account has been deleted");
+      const user = await User.findByIdAndDelete(req.params.id);
+      res.status(200).json({ success : true, message : "Account has been deleted", user : user });
     } catch (err) {
-      return res.status(500).json(err);
+      return res.status(500).json({ success : false, message : "Error while deleting the account", error : err});
     }
   } else {
     return res.status(403).json("You can delete only your account!");
@@ -60,9 +60,9 @@ router.get("/:id", async (req, res) => {
   try {
     const newUser = await User.findById(userId)
     const { password, updatedAt, ...other } = newUser._doc;
-    res.status(200).json(other);
+    res.status(200).json({ success : true, message: "Get a user", other : other });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ success : false, message: "Failed to get a user", err : err});
   }
 });
 
@@ -80,9 +80,9 @@ router.get("/friends/:userId", async (req, res) => {
       const { _id, name, profileImage } = friend;
       friendList.push({ _id, name, profileImage });
     });
-    res.status(200).json(friendList)
+    res.status(200).json({ success : true, message : "Friendlist", friendList : friendList })
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ success : false, message : "Error while fetching friendlist", error: err });
   }
 });
 
@@ -96,12 +96,12 @@ router.put("/:id/follow", async (req, res) => {
       if (!newUser.followers.includes(req.body.user)) {
         await newUser.updateOne({ $push: { followers: req.body.user } });
         await currentUser.updateOne({ $push: { followings: req.params.id } });
-        res.status(200).json("user has been followed");
+        res.status(200).json({ success : true, message: "user has been followed", newUser : newUser, currentUser : currentUser });
       } else {
         res.status(403).json("you allready follow this user");
       }
     } catch (err) {
-      res.status(500).json(err);
+      res.status(500).json({success : false, message : "error!! cannot follow", err : err});
     }
   } else {
     res.status(403).json("you cant follow yourself");
@@ -118,7 +118,7 @@ router.put("/:id/unfollow", async (req, res) => {
       if (newUser.followers.includes(req.body.user)) {
         await newUser.updateOne({ $pull: { followers: req.body.user } });
         await currentUser.updateOne({ $pull: { followings: req.params.id } });
-        res.status(200).json("user has been unfollowed");
+        res.status(200).json({ success :true, message : "user has been unfollowed", newUser : newUser, currentUser : currentUser });
       } else {
         res.status(403).json("you dont follow this user");
       }
