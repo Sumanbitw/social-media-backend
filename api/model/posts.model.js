@@ -4,7 +4,7 @@ const postSchema  = mongoose.Schema({
     user : { type : mongoose.Schema.Types.ObjectId, ref : "User" },
     image : { type : String },
     text : { type : String },
-    likes : [ { user : { type : mongoose.Schema.Types.ObjectId, ref : "User" }}]
+    likes : { type : Array, default : []}
 
 }, { timestamps : true }
 )
