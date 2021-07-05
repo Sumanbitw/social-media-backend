@@ -45,16 +45,24 @@ router.delete("/:id", async (req, res) => {
 });
 //like / dislike a post
 
-router.put("/:id/like", async (req, res) => {
+router.post("/:id/like", async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post.likes.includes(req.body.user)) {
-      await post.updateOne({ $push: { likes: req.body.user } });
-      res.status(200).json({message : "The post has been liked", post : post});
-    } else {
-      await post.updateOne({ $pull: { likes: req.body.user } });
-      res.status(200).json({message : "The post has been disliked", post : post });
-    }
+    // if (!post.likes.includes(req.body.user)) {
+    //   await post.updateOne({ $push: { likes: req.body.user } });
+    //   res.status(200).json({message : "The post has been liked", post : post});
+    // } else {
+    //   await post.updateOne({ $pull: { likes: req.body.user } });
+    //   res.status(200).json({message : "The post has been disliked", post : post });
+    // }
+    const isPostLiked = post.likes.includes(req.body.user)
+
+    isPostLiked 
+    ? await post.likes.pull(req.body.user)
+    : await post.likes.push(req.body.user)
+
+    await post.save()
+    res.json({ message : "The post has been updated ", updatedPost : post })
   } catch (err) {
     res.status(500).json(err);
   }
