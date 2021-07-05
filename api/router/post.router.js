@@ -50,10 +50,10 @@ router.put("/:id/like", async (req, res) => {
     const post = await Post.findById(req.params.id);
     if (!post.likes.includes(req.body.user)) {
       await post.updateOne({ $push: { likes: req.body.user } });
-      res.status(200).json("The post has been liked");
+      res.status(200).json({message : "The post has been liked", post : post});
     } else {
       await post.updateOne({ $pull: { likes: req.body.user } });
-      res.status(200).json("The post has been disliked");
+      res.status(200).json({message : "The post has been disliked", post : post });
     }
   } catch (err) {
     res.status(500).json(err);
