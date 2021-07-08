@@ -88,14 +88,20 @@ router.get("/friends/:userId", async (req, res) => {
 
 //follow a user info
 
-router.put("/:id/follow", async (req, res) => {
+router.post("/:id/follow", async (req, res) => {
   if (req.body.user !== req.params.id) {
     try {
       const newUser = await User.findById(req.params.id);
       const currentUser = await User.findById(req.body.user);
       if (!newUser.followers.includes(req.body.user)) {
-        await newUser.updateOne({ $push: { followers: req.body.user } });
-        await currentUser.updateOne({ $push: { followings: req.params.id } });
+        // await newUser.updateOne({ $push: { followers: req.body.user } });
+        // await currentUser.updateOne({ $push: { followings: req.params.id } });
+
+        await newUser.followers.push(req.body.user)
+        await currentUser.followings.push(req.body.user)
+
+        await newUser.save()
+        await currentUser.save()
         res.status(200).json({ success : true, message: "user has been followed", newUser : newUser, currentUser : currentUser });
       } else {
         res.status(403).json("you allready follow this user");
@@ -110,14 +116,20 @@ router.put("/:id/follow", async (req, res) => {
 
 //unfollow a user
 
-router.put("/:id/unfollow", async (req, res) => {
+router.post("/:id/unfollow", async (req, res) => {
   if (req.body.user !== req.params.id) {
     try {
       const newUser = await User.findById(req.params.id);
       const currentUser = await User.findById(req.body.user);
       if (newUser.followers.includes(req.body.user)) {
-        await newUser.updateOne({ $pull: { followers: req.body.user } });
-        await currentUser.updateOne({ $pull: { followings: req.params.id } });
+      //   await newUser.updateOne({ $pull: { followers: req.body.user } });
+      //   await currentUser.updateOne({ $pull: { followings: req.params.id } });
+
+        await newUser.followers.pull(req.body.user)
+        await currentUser.followings.pull(req.body.user)
+
+        await newUser.save()
+        await currentUser.save()
         res.status(200).json({ success :true, message : "user has been unfollowed", newUser : newUser, currentUser : currentUser });
       } else {
         res.status(403).json("you dont follow this user");
