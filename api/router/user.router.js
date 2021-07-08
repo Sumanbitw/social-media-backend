@@ -98,7 +98,7 @@ router.post("/:id/follow", async (req, res) => {
         // await currentUser.updateOne({ $push: { followings: req.params.id } });
 
         await newUser.followers.push(req.body.user)
-        await currentUser.followings.push(req.body.user)
+        await currentUser.followings.push(req.params.id)
 
         await newUser.save()
         await currentUser.save()
@@ -126,7 +126,7 @@ router.post("/:id/unfollow", async (req, res) => {
       //   await currentUser.updateOne({ $pull: { followings: req.params.id } });
 
         await newUser.followers.pull(req.body.user)
-        await currentUser.followings.pull(req.body.user)
+        await currentUser.followings.pull(req.params.id)
 
         await newUser.save()
         await currentUser.save()
